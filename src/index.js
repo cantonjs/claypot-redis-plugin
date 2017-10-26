@@ -1,24 +1,26 @@
 
-import Redis from 'redis';
-import cacheManagerRedisStore from 'cache-manager-redis-store';
-import pify from 'pify';
+import Redis from 'ioredis';
+import cacheManagerIORedisStore from 'cache-manager-ioredis';
+
+const optionsAdapter = (options = {}) => {
+	if (options.prefix) { options.keyPrefix = options.prefix; }
+	return options;
+};
 
 export default class RedisClaypotPlugin {
 	constructor(options = {}) {
-		pify(Redis.RedisClient.prototype);
-		pify(Redis.Multi.prototype);
 		this._name = options.name || 'redis';
 	}
 
 	registerDatabase(register) {
 		register(this._name, {
 			connect(options) {
-				Redis.createClient(options);
+				return new Redis(optionsAdapter(options));
 			},
 			createCache(options) {
 				return {
-					...options,
-					store: cacheManagerRedisStore,
+					...optionsAdapter(options),
+					store: cacheManagerIORedisStore,
 				};
 			},
 		});
