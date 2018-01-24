@@ -1,18 +1,19 @@
-
 import Redis from 'ioredis';
 import cacheManagerIORedisStore from 'cache-manager-ioredis';
 
 const optionsAdapter = (options = {}) => {
-	if (options.prefix) { options.keyPrefix = options.prefix; }
+	if (options.prefix) {
+		options.keyPrefix = options.prefix;
+	}
 	return options;
 };
 
 export default class RedisClaypotPlugin {
 	constructor(options = {}) {
 		this._name = options.name || 'redis';
-		this._matchModel = options.matchModel ||
-			((name, key) => (name.toLowerCase() === key.toLowerCase()))
-		;
+		this._matchModel =
+			options.matchModel ||
+			((name, key) => name.toLowerCase() === key.toLowerCase());
 	}
 
 	registerDatabase(register) {
