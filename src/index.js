@@ -10,30 +10,52 @@ const optionsAdapter = (options = {}) => {
 
 export default class RedisClaypotPlugin {
 	constructor(options = {}) {
-		this._name = options.name || 'redis';
-		this._matchModel =
-			options.matchModel ||
-			((name, key) => name.toLowerCase() === key.toLowerCase());
+		this._store = options.store || 'redis';
+		this._includeModels = options.includeModels || [];
+		this._excludeModels = options.excludeModels || [];
+		this._modelNamesMap = {};
+		this._injectClients = options.injectClients || 'redisClients';
 	}
 
-	registerDatabase(register) {
-		register(this._name, {
-			connect: (options) => {
-				return new Redis(optionsAdapter(options));
-			},
+	willConnectDatabases(dbsMap, app) {
+		const clients = new Map();
+		for (const [key, db] of dbsMap) {
+			if (db.store === this._store) {
+				const config = optionsAdapter(db.config);
+				clients.set(key, new Redis(config));
+			}
+		}
+		this._clients = app[this._injectClients] = clients;
+	}
 
-			createCache: (options) => {
-				return {
-					...optionsAdapter(options),
+	willCreateCacheStores(cacheStoresMap) {
+		for (const [cacheKey, descriptor] of cacheStoresMap) {
+			if (this._clients.has(cacheKey)) {
+				descriptor.store = cacheManagerIORedisStore;
+				cacheStoresMap.set(cacheKey, {
+					...optionsAdapter(descriptor),
 					store: cacheManagerIORedisStore,
-				};
-			},
+				});
+			}
+		}
+	}
 
-			createModels: (names, key, options) => {
-				if (names.some((name) => this._matchModel(name, key))) {
-					return { [key]: new Redis(optionsAdapter(options)) };
-				}
-			},
-		});
+	willCreateModels(modelsMap) {
+		const includes = this._includeModels;
+		const excludes = this._excludeModels;
+		const clients = this._clients;
+		const namesMap = this._modelNamesMap;
+
+		for (const [name, Model] of modelsMap) {
+			const shouldInclude = includes.length && !includes.includes(name);
+			if (shouldInclude || excludes.includes(name)) {
+				continue;
+			}
+
+			for (const [key, client] of clients) {
+				const prop = namesMap[key] || key;
+				Model[prop] = client;
+			}
+		}
 	}
 }

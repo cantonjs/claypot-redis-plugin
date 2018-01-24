@@ -9,8 +9,8 @@
     "lib"
   ],
   "scripts": {
-    "start": "claypot start",
-    "test": "cross-env CLAYPOT_DEV=true jest",
+    "start": "yarn test --watchAll",
+    "test": "jest --runInBand",
     "prebuild": "rimraf lib",
     "build": "babel src -d lib",
     "build:watch": "yarn build -- -w",
@@ -27,12 +27,12 @@
     "ioredis": "^3.2.1"
   },
   "peerDependencies": {
-    "claypot": "^0.0.0"
+    "claypot": "^0.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",
-    "babel-jest": "^19.0.0",
+    "babel-jest": "^22.1.0",
     "babel-plugin-transform-es2015-destructuring": "^6.19.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "babel-plugin-transform-es2015-parameters": "^6.18.0",
@@ -40,13 +40,13 @@
     "babel-preset-stage-0-without-async": "^1.0.0",
     "babel-register": "^6.11.6",
     "babel-register-cli": "^4.0.0",
-    "claypot": "^0.0.0",
+    "claypot": "^0.0.1",
     "co-body": "^4.2.0",
     "cross-env": "^4.0.0",
     "eslint": "^4.16.0",
     "eslint-config-cantonjs": "^0.2.0",
     "get-my-ip": "0.0.1",
-    "jest": "^19.0.2",
+    "jest": "^22.1.4",
     "kapok-js": "^0.2.1",
     "mkdirp": "^0.5.1",
     "prettier-eslint-cli": "^4.7.0",
