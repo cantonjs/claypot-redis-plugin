@@ -13,7 +13,7 @@ describe('claypot redis plugin', function () {
 		};
 
 		if (app) {
-			for (const client of app.redisClients.values()) {
+			for (const client of Object.values(app.redisClients)) {
 				disconnect(client);
 			}
 

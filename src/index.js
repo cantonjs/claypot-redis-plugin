@@ -18,11 +18,11 @@ export default class RedisClaypotPlugin {
 	}
 
 	willConnectDatabases(dbsMap, app) {
-		const clients = new Map();
+		const clients = {};
 		for (const [key, db] of dbsMap) {
 			if (db.store === this._store) {
 				const config = optionsAdapter(db.config);
-				clients.set(key, new Redis(config));
+				clients[key] = new Redis(config);
 			}
 		}
 		this._clients = app[this._injectClients] = clients;
@@ -30,7 +30,7 @@ export default class RedisClaypotPlugin {
 
 	willCreateCacheStores(cacheStoresMap) {
 		for (const [cacheKey, descriptor] of cacheStoresMap) {
-			if (this._clients.has(cacheKey)) {
+			if (this._clients.hasOwnProperty(cacheKey)) {
 				descriptor.store = cacheManagerIORedisStore;
 				cacheStoresMap.set(cacheKey, {
 					...optionsAdapter(descriptor),
@@ -52,9 +52,12 @@ export default class RedisClaypotPlugin {
 				continue;
 			}
 
-			for (const [key, client] of clients) {
+			for (const key in clients) {
+				if (!clients.hasOwnProperty(key)) {
+					continue;
+				}
 				const prop = namesMap[key] || key;
-				Model[prop] = client;
+				Model[prop] = clients[key];
 			}
 		}
 	}
