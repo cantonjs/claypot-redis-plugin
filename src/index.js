@@ -11,6 +11,7 @@ const optionsAdapter = (options = {}) => {
 export default class RedisClaypotPlugin {
 	constructor(options = {}) {
 		this._store = options.store || 'redis';
+		this._noModel = options.enableModels === false;
 		this._includeModels = options.includeModels || [];
 		this._excludeModels = options.excludeModels || [];
 		this._modelNamesMap = {};
@@ -41,6 +42,10 @@ export default class RedisClaypotPlugin {
 	}
 
 	willCreateModels(modelsMap) {
+		if (this._noModel) {
+			return;
+		}
+
 		const includes = this._includeModels;
 		const excludes = this._excludeModels;
 		const clients = this._clients;
