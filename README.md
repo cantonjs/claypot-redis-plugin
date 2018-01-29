@@ -1,6 +1,6 @@
 # claypot-redis-plugin
 
-**THIS LIBRARY IS UNDER DEVELOPING, PLEASE DON'T USE IT IN PRODUCTION ENV**
+[![Build Status](https://travis-ci.org/cantonjs/claypot-redis-plugin.svg?branch=master)](https://travis-ci.org/cantonjs/claypot-redis-plugin)
 
 ## Installing
 
@@ -8,7 +8,24 @@
 $ yarn add claypot claypot-redis-plugin
 ```
 
-**DOCUMENT IS COMING SOON**
+## Usage
+
+**Claypotfile.js**
+
+```js
+module.exports = {
+  plugins: ['claypot-redis-plugin'],
+  dbs: {
+    foo: {
+      store: 'redis',
+      keyPrefix: 'my_app',
+      cache: {
+        ttl: '1 day',
+      },
+    },
+  },
+};
+```
 
 ## License
 
