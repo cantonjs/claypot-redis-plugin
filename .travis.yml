@@ -8,8 +8,5 @@ node_js:
 services:
   - redis-server
 
-after_script:
-  - yarn coverage
-
 notifications:
   email: false
