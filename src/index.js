@@ -52,11 +52,8 @@ export default class RedisClaypotPlugin {
 		const namesMap = this._modelNamesMap;
 
 		for (const [name, Model] of modelsMap) {
-			const shouldInclude = includes.length && !includes.includes(name);
-			if (shouldInclude || excludes.includes(name)) {
-				continue;
-			}
-
+			const shouldNotInclude = includes.length && !includes.includes(name);
+			if (shouldNotInclude || excludes.includes(name)) continue;
 			for (const key in clients) {
 				if (!clients.hasOwnProperty(key)) {
 					continue;
